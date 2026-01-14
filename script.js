@@ -118,9 +118,10 @@ function getPointsForText(text, startY, fontSize) {
     // Let's stick to full scan but with steps
 
     // Dynamic step based on device to save performance
-    // On mobile (width < 600), use coarser step (e.g. 4 or 5) to reduce particle count
-    // On desktop, use standard density (3)
-    const step = (width < 600) ? 4 : 3;
+    // On mobile, we need MORE definition (smaller step) because screens are small and text is crucial.
+    // Performance tradeoff: we might need to limit max particles elsewhere if it lags,
+    // but for now, legibility is priority.
+    const step = (width < 600) ? 2 : 3;
 
     for (let y = 0; y < height; y += step) {
         for (let x = 0; x < width; x += step) {
@@ -325,7 +326,9 @@ class TextParticle {
 
     draw() {
         ctx.fillStyle = this.color;
-        ctx.fillRect(this.x, this.y, 2, 2);
+        // Make particles slightly bigger on mobile to fill gaps and look "bolder"
+        const pSize = (width < 600) ? 2.5 : 2;
+        ctx.fillRect(this.x, this.y, pSize, pSize);
     }
 }
 
